@@ -3,10 +3,9 @@ import { useState } from 'react';
 // import viteLogo from '/vite.svg'
 // import './App.css'
 
-type Board = number[][];
 function App() {
 
-  const [board, setBoard] = useState<Board>(
+  const [board, setBoard] = useState(
     Array.from({ length: 9 }, () => Array(9).fill(0))
   );
 
@@ -20,12 +19,14 @@ function App() {
       backgroundColor: '#c02828ff'
     }}>
       <h1>Hello Sudoku</h1>
+
       <button
         onClick={() =>
           setBoard(Array.from({ length: 9 }, () => Array(9).fill(0)))
         }>
         Reset Board
       </button>
+
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(9, 40px)',
@@ -35,8 +36,8 @@ function App() {
         border: '2px solid black',
         marginTop: '20px'
       }}>
-        {board.map((row: number[], rowIndex: number) =>
-          row.map((cell: number, colIndex: number) => (
+        {board.map((row, rowIndex) =>
+          row.map((cell, colIndex) => (
             <div
               key={`${rowIndex}-${colIndex}`}
               style={{
@@ -48,17 +49,21 @@ function App() {
                 alignItems: 'center',
                 fontSize: '20px',
                 fontWeight: 'bold',
-                backgroundColor: ((Math.floor(rowIndex / 3) + Math.floor(colIndex / 3)) % 2 === 0) ? '#f0f0f0' : '#ffffff'
+                // alternating 3x3 box background color
+                backgroundColor:
+                  ((Math.floor(rowIndex / 3) + Math.floor(colIndex / 3)) % 2 === 0)
+                    ? '#f0f0f0'
+                    : '#ffffff'
               }}
             >
               {cell !== 0 ? cell : ""}
             </div>
           ))
         )}
-        {/*sudoku board will come here */}
+        {/* sudoku board will come here */}
       </div>
     </div>
   );
 }
 
-export default App
+export default App;
