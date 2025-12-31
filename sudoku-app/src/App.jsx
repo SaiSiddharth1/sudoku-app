@@ -2,16 +2,24 @@ import { useEffect, useState } from 'react';
 import Cell from './components/cell.jsx';
 import { isValidMove } from './utils/validators.js';
 
+function createEmptyBoard() {
+  return Array.from({ length: 9 }, () => Array(9).fill(0));
+}
+
 function App() {
-  const [board, setBoard] = useState(
-    Array.from({ length: 9 }, () => Array(9).fill(0))
-  );
+  const [board, setBoard] = useState(createEmptyBoard());
+
+  function handleNewGame() {
+    setBoard(createEmptyBoard());
+    setSelectedCell(null);
+  }
 
   const [selectedCell, setSelectedCell] = useState(null);
 
-  const handleCellClick = (row, col) => {
+  function handleCellClick(row, col) {
     setSelectedCell({ row, col });
   };
+
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -57,7 +65,6 @@ function App() {
       }}
     >
       <h1 style={{ color: 'white' }}>Hello Sudoku</h1>
-
       <div
         style={{
           display: 'grid',
@@ -84,6 +91,12 @@ function App() {
           ))
         )}
       </div>
+      <button
+        onClick={handleNewGame}
+        style={{ margin: '30px', padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
+      >
+        New Game
+      </button>
     </div>
   );
 }
