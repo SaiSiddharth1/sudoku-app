@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Cell from './components/cell.jsx';
+import { isValidMove } from './utils/validators.js';
 
 function App() {
   const [board, setBoard] = useState(
@@ -20,7 +21,12 @@ function App() {
       const key = event.key;
 
       if (key >= '1' && key <= '9') {
+        const num = Number(key)
         setBoard((prevBoard) => {
+          if (!isValidMove(prevBoard, row, col, num)) {
+            alert("Invalid Move");
+            return prevBoard;
+          }
           const newBoard = prevBoard.map((r) => [...r]);
           newBoard[row][col] = Number(key);
           return newBoard;
@@ -47,7 +53,7 @@ function App() {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
-        backgroundColor: '#c02828',
+        backgroundColor: '#191818ff',
       }}
     >
       <h1 style={{ color: 'white' }}>Hello Sudoku</h1>
@@ -58,8 +64,9 @@ function App() {
           gridTemplateColumns: 'repeat(9, 40px)',
           gridTemplateRows: 'repeat(9, 40px)',
           gap: '0px',
+          color: 'goldenrod',
           backgroundColor: 'black',
-          border: '2px solid black',
+          border: '5px solid WHITE',
         }}
       >
         {board.map((row, rowIndex) =>
