@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import Cell from './components/cell.jsx';
 import { isValidMove } from './utils/validators.js';
+import { solveSudoku } from './utils/solver.js';
+import { generateSudoku } from './utils/generator.js';
 
 function createEmptyBoard() {
   return Array.from({ length: 9 }, () => Array(9).fill(0));
@@ -8,18 +10,27 @@ function createEmptyBoard() {
 
 function App() {
   const [board, setBoard] = useState(createEmptyBoard());
+  const [selectedCell, setSelectedCell] = useState(null);
 
   function handleNewGame() {
-    setBoard(createEmptyBoard());
+    const puzzle = generateSudoku(30); // Generate a puzzle with 30 clues
+    setBoard(puzzle);
+    setSelectedCell(null);
+  }
+  function handleSolve() {
+    const solveBoard = solveSudoku(board);
+    setBoard(solveBoard);
     setSelectedCell(null);
   }
 
-  const [selectedCell, setSelectedCell] = useState(null);
 
   function handleCellClick(row, col) {
     setSelectedCell({ row, col });
   };
 
+  useEffect(() => {
+    handleNewGame();
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -64,7 +75,7 @@ function App() {
         backgroundColor: '#191818ff',
       }}
     >
-      <h1 style={{ color: 'white' }}>Hello Sudoku</h1>
+      <h1 style={{ color: 'white', cursor: 'pointer' }}>Hello Sudoku</h1>
       <div
         style={{
           display: 'grid',
@@ -81,6 +92,8 @@ function App() {
             <Cell
               key={`${rowIndex}-${colIndex}`}
               value={cellValue}
+              row={rowIndex}
+              col={colIndex}
               isSelected={
                 selectedCell &&
                 selectedCell.row === rowIndex &&
@@ -91,12 +104,29 @@ function App() {
           ))
         )}
       </div>
-      <button
-        onClick={handleNewGame}
-        style={{ margin: '30px', padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
+      <div
+        style={{
+          margin: '30px',
+          padding: '10px 20px',
+          fontSize: '16px',
+          borderRadius: '5px',
+          color: 'White',
+          cursor: 'pointer',
+          display: 'flex',
+          gap: '40px',
+        }}
       >
-        New Game
-      </button>
+        <button
+          onClick={handleNewGame}
+        >
+          New Game
+        </button>
+        <button
+          onClick={handleSolve}
+        >
+          Solve
+        </button>
+      </div>
     </div>
   );
 }
