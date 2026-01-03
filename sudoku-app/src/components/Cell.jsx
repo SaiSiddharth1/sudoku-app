@@ -1,10 +1,22 @@
-function Cell({ value, isSelected, onClick, row, col }) {
+function Cell({ value, isSelected, isSolverCell, onClick, row, col }) {
     const borderStyle = {
         borderTop: row % 3 === 0 ? "2px solid white" : "1px solid #999",
         borderLeft: col % 3 === 0 ? "2px solid white" : "1px solid #999",
         borderRight: col === 8 ? "2px solid white" : "1px solid #999",
         borderBottom: row === 8 ? "2px solid white" : "1px solid #999",
     };
+
+    // background priority:
+    // selected > solver-filled > normal
+    let backgroundColor = "black";
+
+    if (isSolverCell) {
+        backgroundColor = "#1e4620"; // dark green
+    }
+
+    if (isSelected) {
+        backgroundColor = "#333"; // selected overrides
+    }
 
     return (
         <div
@@ -18,7 +30,8 @@ function Cell({ value, isSelected, onClick, row, col }) {
                 fontSize: "18px",
                 cursor: "pointer",
                 color: "goldenrod",
-                backgroundColor: isSelected ? "#333" : "black",
+                backgroundColor,
+                userSelect: "none",
                 ...borderStyle,
             }}
         >
