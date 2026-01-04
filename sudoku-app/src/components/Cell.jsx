@@ -13,7 +13,9 @@ function Cell({ value, isSelected, isSolverCell, onClick, row, col }) {
     if (isSolverCell) {
         backgroundColor = "#1e4620"; // dark green
     }
-
+    if (isSelected) {
+        backgroundColor = "#fb0c0cff"; // selected overrides
+    }
     if (isSelected) {
         backgroundColor = "#333"; // selected overrides
     }

@@ -12,23 +12,32 @@ function App() {
   const [board, setBoard] = useState(createEmptyBoard());
   const [selectedCell, setSelectedCell] = useState(null);
   const [solverCells, setSolverCells] = useState([]);
+  const [fixedCells, setFixedCells] = useState([]);
 
-  // Generate puzzle on load
   useEffect(() => {
     handleNewGame();
   }, []);
 
   function handleNewGame() {
-    const puzzle = generatePuzzle(30); // medium difficulty
+    const puzzle = generatePuzzle(30);
     setBoard(puzzle);
     setSelectedCell(null);
-    setSolverCells([]); // reset solver highlights
+    setSolverCells([]);
+
+    const fixed = [];
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        if (puzzle[r][c] !== 0) {
+          fixed.push({ row: r, col: c });
+        }
+      }
+    }
+    setFixedCells(fixed);
   }
 
   function handleSolve() {
     const emptyCells = [];
 
-    // collect empty cells BEFORE solving
     for (let r = 0; r < 9; r++) {
       for (let c = 0; c < 9; c++) {
         if (board[r][c] === 0) {
@@ -44,15 +53,21 @@ function App() {
   }
 
   function handleCellClick(row, col) {
+    if (fixedCells.some((cell) => cell.row === row && cell.col === col)) return;
     setSelectedCell({ row, col });
   }
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (!selectedCell) return;
-      if (solverCells.length > 0) return; // prevent edits after solve
+      if (solverCells.length > 0) return;
 
       const { row, col } = selectedCell;
+
+      if (fixedCells.some((cell) => cell.row === row && cell.col === col)) {
+        return;
+      }
+
       const key = event.key;
 
       if (key >= "1" && key <= "9") {
@@ -60,7 +75,7 @@ function App() {
 
         setBoard((prevBoard) => {
           const newBoard = prevBoard.map((r) => [...r]);
-          newBoard[row][col] = 0; // clear first for validation
+          newBoard[row][col] = 0;
 
           if (!isValidMove(newBoard, row, col, num)) {
             alert("Invalid Move");
@@ -83,7 +98,7 @@ function App() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedCell, solverCells]);
+  }, [selectedCell, solverCells, fixedCells]);
 
   return (
     <div
@@ -121,7 +136,10 @@ function App() {
                 selectedCell.col === colIndex
               }
               isSolverCell={solverCells.some(
-                (pos) => pos.row === rowIndex && pos.col === colIndex
+                (cell) => cell.row === rowIndex && cell.col === colIndex
+              )}
+              isFixed={fixedCells.some(
+                (cell) => cell.row === rowIndex && cell.col === colIndex
               )}
               onClick={() => handleCellClick(rowIndex, colIndex)}
             />
@@ -136,7 +154,6 @@ function App() {
           fontSize: "16px",
           borderRadius: "5px",
           color: "white",
-          cursor: "pointer",
           display: "flex",
           gap: "40px",
         }}
@@ -149,4 +166,3 @@ function App() {
 }
 
 export default App;
-// 
